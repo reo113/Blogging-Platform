@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: { len: [1, 255] },
+        validate: { len: [1, 255], notEmpty: { args: true, msg:"Content cant be blank" } },
       },
       PostId: {
         type: DataTypes.INTEGER,

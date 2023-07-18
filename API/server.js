@@ -21,7 +21,7 @@ app.use(
 );
 
 const authRouter = require("./routes/auth");
-const usersRouter = require("./routes/users");
+const commentsRouter = require("./routes/comments");
 const postsRouter = require("./routes/posts");
 
 app.use((req, res, next) => {
@@ -49,9 +49,9 @@ app.use(forbiddenErrorHandler);
 app.use(notFoundErrorHandler);
 
 // routes
-app.use("/auth", authRouter);
-app.use("/users", usersRouter);
-app.use("/posts", postsRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/comments", commentsRouter);
+app.use("/api/posts", postsRouter);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

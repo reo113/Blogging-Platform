@@ -5,7 +5,6 @@ const { ForbiddenError, NotFoundError } = require("../errors");
 const { User, Post, Comment } = require("../models");
 
 
-
 const authorizePostEdit = (session, post) => {
   if (parseInt(session.userId, 10) !== post.UserId) {
     throw new ForbiddenError("You cannot edit someone else's post");
@@ -32,10 +31,16 @@ const getPost = async (id) => {
   }
   return post;
 };
+
 //get all post 
 router.get("/", authenticateUser, async (req, res) => {
   try {
-    const allPosts = await Post.findAll();
+   const whereClause ={UserID: req.session.userId};
+   if(req.query.status){
+     whereClause.status = req.query.status;
+    }
+    console.log(whereClause);
+    const allPosts = await Post.findAll({where: whereClause});
     res.status(200).json(allPosts);
   } catch (err) {
     console.log(err);
@@ -79,13 +84,11 @@ router.get("/:id", authenticateUser, async (req, res) => {
 });
 //create post
 router.post("/", authenticateUser, async (req, res) => {
-  const userId = req.session.userId;
-
   try {
     const newPost = await Post.create({
       title: req.body.title,
       content: req.body.content,
-      UserId: userId,
+      UserId: req.session.userId,
     });
 
     res.status(201).json(newPost);

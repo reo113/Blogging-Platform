@@ -24,15 +24,14 @@ const handleErrors = (err, res) => {
   }
   res.status(500).send({ message: err.message });
 };
-//get all comments from user
-router.get("/:id/comments", authenticateUser, async (req, res) => {
-  const userId = parseInt(req.params.id, 10);
 
+//get all comments from user( "/id/comments")
+router.get("/", authenticateUser, async (req, res) => {
   try {
+    const whereClause = { UserId: req.session.userId };
     const comments = await Comment.findAll({
-      where: { UserId: userId },
+      where: whereClause,
     });
-
     if (comments) {
       res.status(200).json(comments);
     } else {
@@ -43,79 +42,70 @@ router.get("/:id/comments", authenticateUser, async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 });
-//get specific comment from user
-router.get("/:id/comments", authenticateUser, async (req, res) => {
+// //get specific comment from user
+// router.get("/:id/comments", authenticateUser, async (req, res) => {
+//   try {
+//     const postId = req.params.id;
+
+//     const post = await Post.findByPk(postId);
+//     if (!post) {
+//       return res.status(404).send({ message: "Post not found" });
+//     }
+
+//     const comments = await Comment.findAll({
+//       where: {
+//         PostId: postId,
+//       },
+//     });
+
+//     if (comments.length > 0) {
+//       res.status(200).json(comments);
+//     } else {
+//       res.status(404).send({ message: "No comments" });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ message: err.message });
+//   }
+// });
+//create comment("/:id/comments"")
+router.post("/", authenticateUser, async (req, res) => {
   try {
-    const postId = req.params.id;
-
-    const post = await Post.findByPk(postId);
-    if (!post) {
-      return res.status(404).send({ message: "Post not found" });
-    }
-
-    const comments = await Comment.findAll({
-      where: {
-        PostId: postId,
-      },
+    const comment = await Comment.create({
+      content: req.body.content,
+      UserId: req.session.userId,
+      PostId: req.body.postId,
     });
-
-    if (comments.length > 0) {
-      res.status(200).json(comments);
-    } else {
-      res.status(404).send({ message: "No comments" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: err.message });
-  }
-});
-//create comment
-router.post("/:id/comments", authenticateUser, async (req, res) => {
-  const postId = parseInt(req.params.id, 10);
-  const content = req.body.content;
-  const userId = req.session.userId;
-
-  try {
-    const newComment = await Comment.create({
-      content: content,
-      UserId: userId,
-      PostId: postId,
-    });
-
-    res.status(201).json({
-      message: "Comment created successfully",
-      comment: newComment,
-    });
+    res.status(201).json(comment);
   } catch (err) {
     handleErrors(err, res);
   }
 });
-//edit comment
-router.patch("/:postId/comments/:commentId",authenticateUser,async (req, res) => {
-    try {
-      const comment = await Comment.findOne({
-        where: { id: req.params.commentId },
-      });
-      await authorizeCommentEdit;
-      const updatedComment = await comment.update(req.body);
-      res.status(200).json(updatedComment);
-    } catch (err) {
-      handleErrors(err, res);
-    }
+//edit comment (":postId/comments/:commentId")
+router.patch("/:id", authenticateUser, async (req, res) => {
+  try {
+    const comment = await Comment.findOne({
+      where: { id: req.params.id },
+    });
+    await authorizeCommentEdit(req.session, comment);
+    const updatedComment = await comment.update(req.body);
+    res.status(200).json(updatedComment);
+  } catch (err) {
+    handleErrors(err, res);
   }
-);
-//delete comment
-router.delete("/:postId/comments/:commentId",authenticateUser,async (req, res) => {
-    try {
-      const comment = await Comment.findOne({
-        where: { id: req.params.commentId },
-      });
-      await authorizeCommentDelete;
-      await comment.destroy();
-      res.status(204).end();
-    } catch (err) {
-      handleErrors(err, res);
-    }
+});
+//delete comment (":postId/comments/:commentId")
+router.delete("/:id", authenticateUser, async (req, res) => {
+  try {
+    const comment = await Comment.findOne({
+      where: { id: req.params.id },
+    });
+    await authorizeCommentDelete(req.session, comment);
+    await comment.destroy();
+    res.status(200).send({ message: "Note deleted successfully" });
+  } catch (err) {
+    handleErrors(err, res);
   }
-);
+});
 
+module.exports = router;
