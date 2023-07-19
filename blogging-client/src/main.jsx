@@ -6,8 +6,9 @@ import Root from "./routes/root";
 import ErrorPage from "./ErrorPage";
 import Login from "./routes/auth/Login";
 import Signup from "./routes/auth/Signup";
-import ProtectedRoute from "./routes/ProtectedRoute";
+// import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthProvider from "./contexts/AuthContext";
+// import PostList, {loader as postLoader} from "./routes/posts/BlogPost";
 
 const router = createBrowserRouter([
   {
@@ -19,10 +20,10 @@ const router = createBrowserRouter([
       //   index: true,
       //   element: (
       //     <ProtectedRoute>
-      //       <JobList />
+      //       <PostList />
       //     </ProtectedRoute>
       //   ),
-      //   loader: jobLoader,
+      //   loader: postLoader,
       // },
       {
         path: "/login",

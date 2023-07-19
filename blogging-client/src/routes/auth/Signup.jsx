@@ -1,6 +1,6 @@
-import { Form, redirect, Navigate } from "react-router-dom";
+import { Form, Navigate } from "react-router-dom";
 import { useContext } from "react";
-import AuthContext from "../../contexts/AuthContext";
+import {AuthContext} from "../../contexts/AuthContext";
 
 
 function Signup() {

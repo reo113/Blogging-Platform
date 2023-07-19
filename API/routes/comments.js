@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticateUser } = require("../middleware/auth");
 const { ForbiddenError, NotFoundError } = require("../errors");
-const { User, Post, Comment } = require("../models");
+const { Comment } = require("../models");
 
 //authorize comment edit
 const authorizeCommentEdit = (session, comment) => {
@@ -68,13 +68,14 @@ router.get("/", authenticateUser, async (req, res) => {
 //     res.status(500).send({ message: err.message });
 //   }
 // });
+
 //create comment("/:id/comments"")
-router.post("/", authenticateUser, async (req, res) => {
+router.post("/:id", authenticateUser, async (req, res) => {
   try {
     const comment = await Comment.create({
       content: req.body.content,
       UserId: req.session.userId,
-      PostId: req.body.postId,
+      PostId: parseInt(req.params.id, 10),
     });
     res.status(201).json(comment);
   } catch (err) {

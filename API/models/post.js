@@ -20,10 +20,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           len: [1, 255],
-          notEmpty: {
-            msg: "Content cannot be empty",
-            args: true,
-          },
         },
       },
       Title: {

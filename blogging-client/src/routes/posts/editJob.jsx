@@ -2,9 +2,9 @@ import { Form, useLoaderData, Link, redirect,useActionData } from "react-router-
 import { statusTextById } from "../../utils";
 
 export async function loader({ params }) {
-  const jobResponse = await fetch(`/api/posts/${params.postId}`);
-  const job = await jobResponse.json();
-  return { job };
+  const postResponse = await fetch(`/api/posts`);
+  const post = await postResponse.json();
+  return { post };
 }
 
 export async function action({ request, params }) {

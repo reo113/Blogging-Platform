@@ -4,7 +4,6 @@ const { authenticateUser } = require("../middleware/auth");
 const { ForbiddenError, NotFoundError } = require("../errors");
 const { User, Post, Comment } = require("../models");
 
-
 const authorizePostEdit = (session, post) => {
   if (parseInt(session.userId, 10) !== post.UserId) {
     throw new ForbiddenError("You cannot edit someone else's post");
@@ -32,19 +31,14 @@ const getPost = async (id) => {
   return post;
 };
 
-//get all post 
+//get all post
 router.get("/", authenticateUser, async (req, res) => {
   try {
-   const whereClause ={UserID: req.session.userId};
-   if(req.query.status){
-     whereClause.status = req.query.status;
-    }
-    console.log(whereClause);
-    const allPosts = await Post.findAll({where: whereClause});
+    const allPosts = await Post.findAll({ include: [Comment] });
     res.status(200).json(allPosts);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).send({ message: err.message });
   }
 });
 
@@ -86,8 +80,8 @@ router.get("/:id", authenticateUser, async (req, res) => {
 router.post("/", authenticateUser, async (req, res) => {
   try {
     const newPost = await Post.create({
-      title: req.body.title,
-      content: req.body.content,
+      Title: req.body.title,
+      Content: req.body.content,
       UserId: req.session.userId,
     });
 

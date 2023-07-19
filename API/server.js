@@ -5,12 +5,14 @@ const app = express();
 const port = 4000;
 const cors = require("cors");
 const { User, Post, Comment } = require("./models");
-require("dotenv").config();
-
+const authRouter = require("./routes/auth");
+const commentsRouter = require("./routes/comments");
+const postsRouter = require("./routes/posts");
 const {
   forbiddenErrorHandler,
   notFoundErrorHandler,
 } = require("./middleware/errorHandlers");
+require("dotenv").config();
 
 app.use(
   cors({
@@ -20,9 +22,6 @@ app.use(
   })
 );
 
-const authRouter = require("./routes/auth");
-const commentsRouter = require("./routes/comments");
-const postsRouter = require("./routes/posts");
 
 app.use((req, res, next) => {
   console.log(`Request: ${req.method} ${req.originalUrl}`);
